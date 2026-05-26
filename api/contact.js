@@ -65,6 +65,62 @@ function formatRequest(data) {
   return { text, html };
 }
 
+function formatClientAutoresponder(data) {
+  const name = textValue(data, "name");
+  const greeting = name ? `Dear ${name},` : "Dear Sir or Madam,";
+
+  const text = [
+    greeting,
+    "",
+    "Thank you for contacting Soul & Domus.",
+    "",
+    "Your private request has been received. There is no obligation at this stage, and there are no hidden clauses attached to this first contact.",
+    "",
+    "Soul & Domus carefully reviews each request personally. Our responses are not immediate because every request is evaluated seriously and individually, with the calm attention that a private acquisition deserves.",
+    "",
+    "The team usually replies within 2 working days.",
+    "",
+    "The Private Room exists precisely to avoid rushed, generic interactions and to create a more considered space for your questions, your timing and your priorities.",
+    "",
+    "Abbiamo ricevuto la sua richiesta. La leggeremo con attenzione e risponderemo normalmente entro 2 giorni lavorativi.",
+    "",
+    "With respectful regards,",
+    "Soul & Domus"
+  ].join("\n");
+
+  const html = `
+    <div style="font-family:Arial,sans-serif;color:#26190f;line-height:1.6;max-width:680px;">
+      <p>${escapeHtml(greeting)}</p>
+      <p>Thank you for contacting <strong>Soul &amp; Domus</strong>.</p>
+      <p>
+        Your private request has been received. There is no obligation at this
+        stage, and there are no hidden clauses attached to this first contact.
+      </p>
+      <p>
+        Soul &amp; Domus carefully reviews each request personally. Our responses
+        are not immediate because every request is evaluated seriously and
+        individually, with the calm attention that a private acquisition deserves.
+      </p>
+      <p>The team usually replies within <strong>2 working days</strong>.</p>
+      <p>
+        The Private Room exists precisely to avoid rushed, generic interactions
+        and to create a more considered space for your questions, your timing and
+        your priorities.
+      </p>
+      <p style="margin-top:24px;">
+        <em>Abbiamo ricevuto la sua richiesta. La leggeremo con attenzione e
+        risponderemo normalmente entro 2 giorni lavorativi.</em>
+      </p>
+      <p style="margin-top:24px;">
+        With respectful regards,<br />
+        <strong>Soul &amp; Domus</strong>
+      </p>
+    </div>
+  `;
+
+  return { text, html };
+}
+
 async function readBody(req) {
   if (req.body && typeof req.body === "object") {
     return req.body;
@@ -130,6 +186,27 @@ module.exports = async function handler(req, res) {
 
     if (!response.ok) {
       return res.status(502).json({ error: "Email provider rejected the request" });
+    }
+
+    const clientEmail = textValue(data, "email");
+    const clientAutoresponder = formatClientAutoresponder(data);
+    const clientResponse = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        from: CONTACT_FROM_EMAIL,
+        to: [clientEmail],
+        subject: "Your Private Request Has Been Received - Soul & Domus",
+        text: clientAutoresponder.text,
+        html: clientAutoresponder.html
+      })
+    });
+
+    if (!clientResponse.ok) {
+      return res.status(502).json({ error: "Client autoresponder was rejected" });
     }
 
     return res.status(200).json({ ok: true });
