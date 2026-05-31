@@ -217,7 +217,7 @@ if (form) {
         throw new Error("The request could not be sent.");
       }
 
-      form.reset();
+      if (window.localStorage.getItem(META_CONSENT_KEY) === "accepted" && typeof window.fbq === "function") { window.fbq("track", "Lead"); }      form.reset();
       setStatus("Thank you. Your request has been sent to Soul & Domus.");
     } catch (error) {
       setStatus(
