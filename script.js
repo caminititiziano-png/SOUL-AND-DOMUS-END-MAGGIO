@@ -1,5 +1,124 @@
 const form = document.querySelector("#clientForm");
 const formStatus = document.querySelector("#formStatus");
+const META_PIXEL_ID = "988766597077072";
+const META_CONSENT_KEY = "soul-domus-meta-consent";
+
+function loadMetaPixel() {
+  if (window.fbq) {
+    window.fbq("consent", "grant");
+    return;
+  }
+
+  !function(f, b, e, v, n, t, s) {
+    if (f.fbq) return;
+    n = f.fbq = function() {
+      n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+    };
+    if (!f._fbq) f._fbq = n;
+    n.push = n;
+    n.loaded = true;
+    n.version = "2.0";
+    n.queue = [];
+    t = b.createElement(e);
+    t.async = true;
+    t.src = v;
+    s = b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t, s);
+  }(window, document, "script", "https://connect.facebook.net/en_US/fbevents.js");
+
+  window.fbq("consent", "grant");
+  window.fbq("init", META_PIXEL_ID);
+  window.fbq("track", "PageView");
+}
+
+function removeMetaCookies() {
+  const cookieNames = ["_fbp", "_fbc"];
+  const domainParts = window.location.hostname.split(".");
+  const domains = ["", window.location.hostname];
+
+  if (domainParts.length > 1) {
+    domains.push(`.${domainParts.slice(-2).join(".")}`);
+  }
+
+  cookieNames.forEach((name) => {
+    domains.forEach((domain) => {
+      const domainAttribute = domain ? `; domain=${domain}` : "";
+      document.cookie = `${name}=; Max-Age=0; path=/${domainAttribute}; SameSite=Lax`;
+    });
+  });
+}
+
+function setMetaConsent(value) {
+  window.localStorage.setItem(META_CONSENT_KEY, value);
+
+  if (value === "accepted") {
+    loadMetaPixel();
+    return;
+  }
+
+  if (window.fbq) {
+    window.fbq("consent", "revoke");
+  }
+
+  removeMetaCookies();
+}
+
+function buildCookieBanner() {
+  const banner = document.createElement("section");
+  banner.className = "cookie-banner";
+  banner.id = "cookieBanner";
+  banner.setAttribute("role", "dialog");
+  banner.setAttribute("aria-label", "Cookie preferences");
+  banner.innerHTML = `
+    <div>
+      <strong>Privacy choices</strong>
+      <p>
+        We use optional Meta Pixel tracking only with your consent to measure
+        advertising performance. You can accept or reject it. Essential website
+        functions remain available either way. Read our
+        <a href="cookie.html">Cookie Notice</a>.
+      </p>
+    </div>
+    <div class="cookie-banner-actions">
+      <button type="button" class="btn secondary" data-cookie-reject>Reject</button>
+      <button type="button" class="btn primary" data-cookie-accept>Accept</button>
+    </div>
+  `;
+
+  banner.querySelector("[data-cookie-accept]").addEventListener("click", () => {
+    setMetaConsent("accepted");
+    banner.hidden = true;
+  });
+
+  banner.querySelector("[data-cookie-reject]").addEventListener("click", () => {
+    setMetaConsent("rejected");
+    banner.hidden = true;
+  });
+
+  document.body.appendChild(banner);
+  return banner;
+}
+
+function initializeCookiePreferences() {
+  const banner = buildCookieBanner();
+  const choice = window.localStorage.getItem(META_CONSENT_KEY);
+
+  if (choice === "accepted") {
+    banner.hidden = true;
+    loadMetaPixel();
+  } else if (choice === "rejected") {
+    banner.hidden = true;
+    removeMetaCookies();
+  }
+
+  document.querySelectorAll("[data-cookie-settings]").forEach((button) => {
+    button.addEventListener("click", () => {
+      banner.hidden = false;
+    });
+  });
+}
+
+initializeCookiePreferences();
 
 function fieldValue(formData, key) {
   return String(formData.get(key) || "").trim();
