@@ -85,14 +85,19 @@ function buildCookieBanner() {
     </div>
   `;
 
+  const hideBanner = () => {
+    banner.hidden = true;
+    document.body.classList.remove("cookie-visible");
+  };
+
   banner.querySelector("[data-cookie-accept]").addEventListener("click", () => {
     setMetaConsent("accepted");
-    banner.hidden = true;
+    hideBanner();
   });
 
   banner.querySelector("[data-cookie-reject]").addEventListener("click", () => {
     setMetaConsent("rejected");
-    banner.hidden = true;
+    hideBanner();
   });
 
   document.body.appendChild(banner);
@@ -109,11 +114,14 @@ function initializeCookiePreferences() {
   } else if (choice === "rejected") {
     banner.hidden = true;
     removeMetaCookies();
+  } else {
+    document.body.classList.add("cookie-visible");
   }
 
   document.querySelectorAll("[data-cookie-settings]").forEach((button) => {
     button.addEventListener("click", () => {
       banner.hidden = false;
+      document.body.classList.add("cookie-visible");
     });
   });
 }
@@ -232,4 +240,42 @@ if (form) {
       }
     }
   });
+}
+
+// --- WhatsApp click tracking ---
+function trackEvent(name, params) {
+  if (window.localStorage.getItem("sd_meta_consent") === "accepted" && typeof window.fbq === "function") {
+    window.fbq("trackCustom", name, params || {});
+  }
+}
+
+document.querySelectorAll('a[href*="wa.me"]').forEach(function(el) {
+  el.addEventListener("click", function() {
+    trackEvent("WhatsAppClick", { source: el.className || "link" });
+  });
+});
+
+// --- Form step tracking ---
+var formStarted = false;
+if (form) {
+  form.addEventListener("focusin", function() {
+    if (!formStarted) {
+      formStarted = true;
+      trackEvent("FormStart");
+    }
+  });
+
+  var budgetField = form.querySelector('[name="budget"]');
+  if (budgetField) {
+    budgetField.addEventListener("change", function() {
+      trackEvent("BudgetSelected", { budget: budgetField.value });
+    });
+  }
+
+  var regionField = form.querySelector('[name="region"]');
+  if (regionField) {
+    regionField.addEventListener("change", function() {
+      trackEvent("RegionSelected", { region: regionField.value });
+    });
+  }
 }
