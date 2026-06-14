@@ -190,6 +190,21 @@ function openFallbackEmail(formData) {
   window.location.href = `mailto:hello@soulanddomus.com?subject=${subject}&body=${body}`;
 }
 
+function canTrackMetaLead() {
+  return (
+    window.localStorage.getItem(META_CONSENT_KEY) === "accepted" &&
+    typeof window.fbq === "function"
+  );
+}
+
+function trackMetaLead() {
+  if (!canTrackMetaLead()) {
+    return;
+  }
+
+  window.fbq("track", "Lead");
+}
+
 if (form) {
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -211,6 +226,7 @@ if (form) {
     }
 
     setStatus("Sending your request...");
+    trackMetaLead();
 
     try {
       const response = await fetch(form.action || "/api/contact", {
@@ -225,7 +241,7 @@ if (form) {
         throw new Error("The request could not be sent.");
       }
 
-      if (window.localStorage.getItem(META_CONSENT_KEY) === "accepted" && typeof window.fbq === "function") { window.fbq("track", "Lead"); }      form.reset();
+      form.reset();
       setStatus("Thank you. Your request has been sent to Soul & Domus.");
     } catch (error) {
       setStatus(
