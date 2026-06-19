@@ -11,6 +11,26 @@
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://www.soulanddomus.com/assets/social-preview.jpg">
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1155034444354280');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1155034444354280&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+<script>
+window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
 <script defer src="/_vercel/insights/script.js"></script>
 <style>
 .seal-chat{position:fixed;bottom:24px;right:24px;z-index:10001;background:#0c0e11;border:1px solid rgba(195,164,103,0.3);color:var(--cream,#efe7d6);border-radius:12px;padding:10px 14px;font-size:11px;font-family:"Jost",system-ui,sans-serif;font-weight:500;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:6px;max-width:86px;text-align:center;line-height:1.3;box-shadow:0 4px 20px rgba(0,0,0,0.5);transition:transform .2s,box-shadow .2s,bottom .3s;letter-spacing:.02em}
@@ -260,7 +280,7 @@
     <a href="#noto">Developments</a>
     <a href="#faq">Answers</a>
   </nav>
-  <a href="#contact" class="btn">Private Review</a>
+  <a href="#contact" class="btn" onclick="trackCTA('Nav – Private Consultation')">Private Consultation</a>
 </header>
 
 <!-- HERO -->
@@ -272,8 +292,8 @@
     <h1 class="reveal d1">You found a property in Italy.<br><em>Now the real work begins.</em></h1>
     <div class="sub reveal d2">Checked. Verified. Protected — before you commit.</div>
     <div class="cta-row reveal d3">
-      <a href="#contact" class="btn solid">Request a private review</a>
-      <a href="#contact" class="btn">I already found a property</a>
+      <a href="#contact" class="btn solid cta-primary" onclick="trackCTA('Receive a Curated Property Shortlist')">Receive a Curated Property Shortlist</a>
+      <a href="#contact" class="btn cta-secondary" onclick="trackCTA('Request a Private Consultation')">Request a Private Consultation</a>
     </div>
     <p class="reveal d4">80% of Italian properties have at least one legal irregularity. 1 in 3 foreign buyers gives up — not because of Italy, but because of what nobody told them. Soul &amp; Domus is the only buyer-side method that checks everything before you commit.</p>
     <div class="reveal d4" style="margin-top:32px;display:flex;flex-wrap:wrap;gap:10px 20px;font-family:var(--sans);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)">
@@ -656,5 +676,64 @@
   <img src="assets/soul-domus-wax-seal.png" width="44" height="44" alt="Soul &amp; Domus seal">
   <span>Sorry, no bot here. A real person always answers.</span>
 </a>
+<script>
+/* =============================================
+   SOUL & DOMUS — Custom Tracking Events
+   Vercel Analytics + Meta Pixel (fbq)
+   ============================================= */
+
+function trackCTA(label) {
+  if (window.va) {
+    window.va('event', { name: 'cta_click', data: { label: label } });
+  }
+  if (window.fbq) {
+    fbq('track', 'Contact', { content_name: label });
+    fbq('trackCustom', 'CTAClick', { label: label });
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+
+  document.querySelectorAll('a[href*="wa.me"], a[href*="whatsapp.com"], a[href*="whatsapp"]').forEach(function(el) {
+    el.addEventListener('click', function() {
+      if (window.va) { window.va('event', { name: 'whatsapp_click' }); }
+      if (window.fbq) {
+        fbq('track', 'Contact', { content_name: 'WhatsApp' });
+        fbq('trackCustom', 'WhatsAppClick');
+      }
+    });
+  });
+
+  document.querySelectorAll('a[href^="mailto:"]').forEach(function(el) {
+    el.addEventListener('click', function() {
+      var email = el.href.replace('mailto:', '');
+      if (window.va) { window.va('event', { name: 'email_click', data: { email: email } }); }
+      if (window.fbq) {
+        fbq('track', 'Contact', { content_name: 'Email' });
+        fbq('trackCustom', 'EmailClick');
+      }
+    });
+  });
+
+  document.querySelectorAll('form').forEach(function(form) {
+    form.addEventListener('submit', function() {
+      if (window.va) { window.va('event', { name: 'form_submit', data: { form_id: form.id || 'contact_form' } }); }
+      if (window.fbq) {
+        fbq('track', 'Lead');
+        fbq('trackCustom', 'FormSubmit', { form_id: form.id || 'contact_form' });
+      }
+    });
+  });
+
+  document.querySelectorAll('a[href="#contact"]').forEach(function(el) {
+    el.addEventListener('click', function() {
+      var label = el.textContent.trim();
+      if (window.va) { window.va('event', { name: 'cta_click', data: { label: label } }); }
+      if (window.fbq) { fbq('trackCustom', 'CTAClick', { label: label }); }
+    });
+  });
+
+});
+</script>
 </body>
 </html>
