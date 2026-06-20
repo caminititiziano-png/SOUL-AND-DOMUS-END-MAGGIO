@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://www.soulanddomus.com/</loc>
+    <loc>https://soulanddomus.com/</loc>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.soulanddomus.com/privacy</loc>
+    <loc>https://soulanddomus.com/privacy</loc>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://www.soulanddomus.com/cookie</loc>
+    <loc>https://soulanddomus.com/cookie</loc>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://www.soulanddomus.com/terms</loc>
+    <loc>https://soulanddomus.com/terms</loc>
     <priority>0.3</priority>
   </url>
 </urlset>
