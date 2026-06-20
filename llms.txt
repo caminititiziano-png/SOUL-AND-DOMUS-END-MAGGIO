@@ -22,6 +22,14 @@ Core services:
 - Future Private Room for documents, timeline, municipal status, project gallery, communication and post-purchase services.
 - Domus Care as post-acquisition coordination through selected local partners, subject to area, availability and approved estimates.
 
+Pages:
+- https://soulanddomus.com/ — Main page with full service description, method, testimonials, FAQ
+- https://soulanddomus.com/buyer-agent-italy — Independent buyer agent service for foreign property buyers in Italy
+- https://soulanddomus.com/buy-property-italy-foreigners — Complete guide to buying property in Italy as a foreigner (legal, costs, risks)
+- https://soulanddomus.com/sicily-real-estate-foreigners — Sicily real estate: Noto, Val di Noto, subdivision opportunities for international buyers
+- https://soulanddomus.com/lake-como-property-buyers — Lake Como property guide for international buyers (villas, apartments, local expertise)
+- https://soulanddomus.com/blog/italian-property-legal-checklist — 12 essential documents to verify before purchasing property in Italy
+
 Contact:
 hello@soulanddomus.com
 Via Giuseppe Rovelli 16, 22100 Como, Italy
