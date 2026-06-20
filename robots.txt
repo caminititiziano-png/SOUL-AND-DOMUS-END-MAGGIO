@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.soulanddomus.com/sitemap.xml
+Sitemap: https://soulanddomus.com/sitemap.xml
